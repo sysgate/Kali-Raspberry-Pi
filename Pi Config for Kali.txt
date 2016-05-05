@@ -1,0 +1,570 @@
+Kali 2.0 
+
+nano /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+address 10.0.2.1
+netmask 255.255.255.0
+gateway 10.0.1.1
+
+
+allow-hotplug wlan2
+iface wlan2 inet static
+address 10.0.3.1
+netmask 255.255.255.0
+gateway 10.0.1.1
+
+pre-up iptables-restore < /etc/iptables.ipv4.nat
+
+
+nano /etc/hostapd/hostapd.conf
+#interface=wlan0
+interface=wlan2
+ssid=RPi-wifi
+channel=3
+#bridge=br0
+country_code=US
+ctrl_interface=wlan2
+ctrl_interface_group=0
+
+# WPA and WPA2 configuration
+
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=3
+wpa_passphrase=DuskyConure
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+
+beacon_int=100
+auth_algs=3
+macaddr_acl=0
+wmm_enabled=1
+eap_reauth_period=360000000
+
+# Hardware configuration
+
+driver=rtl871xdrv
+ieee80211n=1
+hw_mode=g
+# device_name=RTL8192CU
+manufacturer=Realtek
+
+
+
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT 
+iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT 
+iptables -A FORWARD -i eth10 -o eth0 -j ACCEPT
+
+History
+   11  tar xzf mpich-3.0.4.tar.gz 
+   12  ls -la
+   13  cd /home/mpich_build/
+   14  /root/mpich3/mpich-3.0.4/configure -prefix=/home/rpimpi/mpich3-install
+   15  make && make install
+   16  reboot
+   17  tail -f /var/log/syslog
+   18  ls -la
+   19  cd mpi-scripts/
+   20  ls
+   21  mpiexec -f machinefile -n 1 hostname
+   22  nano machinefile
+   23  mpiexec -f machinefile -n 3 hostname
+   24  history
+   25  ssh kali2
+   26  ssh kali2
+   27  mpiexec -f machinefile -n 2 hostname
+   28  cd /root/mpich3/
+   29  ls
+   30  cd mpich-3.0.4
+   31  ls
+   32  ls
+   33  cd ..
+   34  ls
+   35  cd ..
+   36  ls
+   37  cd mpi-scripts/
+   38  ls
+   39  which mpicc
+   40  which mpiexec
+   41  locate cpi
+   42  locate mpich-build
+   43  locate mpich_build
+   44  pwd
+   45  cd /home/mpich_build/
+   46  ls
+   47  cd examples/
+   48  ls
+   49  ls -la
+   50  mpiexec -f /root/mpi-scripts/machinefile -n 1 cpi
+   51  mpiexec -f /root/mpi-scripts/machinefile -n 1 /home/mpich_build/examples/cpi
+   52  mpiexec -f /root/mpi-scripts/machinefile -n 2 /home/mpich_build/examples/cpi
+   53  mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+   54  mpiexec -f /root/mpi-scripts/machinefile -n 2 /home/mpich_build/examples/cpi
+   55  mpiexec -f /root/mpi-scripts/machinefile -n 2 /home/mpich_build/examples/cpi
+   56  mpiexec -f /root/mpi-scripts/machinefile -n 2 hostname
+   57  mpiexec -f /root/mpi-scripts/machinefile -n 3 hostname
+   58  mpiexec -f /root/mpi-scripts/machinefile -n 3 hostname
+   59  mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+   60  time mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+   61  which python
+   62  apt-get install python-mpi4py
+   63  cd ~
+   64  mkdir mpi4py
+   65  cd mpi4py/
+   66  wget https://bitbucket.org/mpi4py/mpi4py/downloads/mpi4py-1.3.1.tar.gz
+   67  tar xfz mpi4py-1.3.1.tar.gz 
+   68  cd mpi4py-1.3.1/demo
+   69  ls
+   70  ls -la
+   71  cd ..
+   72  ls
+   73  python setup.py build
+   74  apt-get install python-dev python-pip
+   75  apt-get update –fix-missing
+   76  python setup.py build  –mpicc=/usr/local/mpich2/bin/mpicc
+   77  pip install mpi4py
+   78   from mpi4py import MPI
+   79  history
+   80  cd..
+   81  cd ~
+   82  cd mpich3/
+   83  ls
+   84  cd mpich-3.0.4
+   85  ls
+   86  cd examples/
+   87  ls
+   88  history
+   89  mpiexec -f /root/mpi-scripts/machinefile -n 2 /home/mpich_build/examples/cpi
+   90  time mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+   91  mpiexec -f /root/mpi-scripts/machinefile -n 1 /home/mpich_build/examples/cpi
+   92  reboot
+   93  ssh root@10.0.2.2
+   94  ssh root@10.0.2.3
+   95  top
+   96  cd mpi-scripts/
+   97  ls
+   98  ls -la
+   99  history
+  100  cd /home/mpich_build/examples/cpi
+  101  cd /home/mpich_build/examples
+  102  mpiexec -f /root/mpi-scripts/machinefile -n 1 /home/mpich_build/examples/cpi
+  103  mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+  104  mpiexec -f /root/mpi-scripts/machinefile -n 3 cpi
+  105  mpiexec -f /root/mpi-scripts/machinefile -n 3 host
+  106  which mpiexec
+  107  mpiexec -f /root/mpi-scripts/machinefile -n 3 host
+  108  cd /root/mpi-scripts/
+  109  ls
+  110  mpiexec -f machinefile -n 1 hostname
+  111  cd ..
+  112  ls
+  113  nano .profile 
+  114  mkdir mpi_scripts
+  115  cd mpi_scripts/
+  116  ls
+  117  echo `/sbin/ifconfig eth0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'` > machinefile
+  118  mpiexec -f machinefile -n 1 hostname
+  119  cd /home/mpich_build/
+  120  ls
+  121  ls -la
+  122  make install
+  123  cd ~
+  124  ls
+  125  cd mpi-scripts/
+  126  ls
+  127  mpiexec -f machinefile -n 1 hostname
+  128  mpiexec
+  129  reboot
+  130  cat /var/log/syslog
+  131  make && make install
+  132  ssh pi@10.0.2.4
+  133  cat ~/.ssh/id_rsa.pub | ssh pi@10.0.2.4 'cat >> authorized_keys'
+  134  ssh pi@10.0.2.4
+  135  ssh pi@10.0.2.4
+  136  ssh pi@10.0.2.4
+  137  ls
+  138  ls
+  139  pwd
+  140  cd /home/mpich_build/
+  141  ls
+  142  cd examples/
+  143  ls
+  144  ls -la
+  145  pip install ansible
+  146  ssh kali3
+  147  mpiexec -f machinefile -n 1 hostname
+  148  mpiexec -f /root/mpi-scripts/machinefile -n 1 hostname
+  149  mpiexec -f /root/mpi-scripts/machinefile -n 4 updatedb
+  150  ls -la
+  151  mpiexec -f /root/mpi-scripts/machinefile -n 1 updatedb
+  152  locate mpi
+  153  locate mpicc
+  154  locate mpicxx
+  155  locate mpich3
+  156  cd /root
+  157  cat .profile
+  158  locate libmpich.a
+  159  cd mpi-scripts/
+  160  history
+  161  which mpiexec
+  162  mpiexec -f machinefile -n 1 hostname
+  163  mpiexec -f machinefile -n 3 hostname
+  164  cd /home/mpich_build/examples
+  165  ls -la
+  166  mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+  167  mpiexec -f /root/mpi-scripts/machinefile -n 3 hostname
+  168  mpiexec -f /root/mpi-scripts/machinefile -n 3 ifconfig
+  169  cd ..
+  170  mpiexec -f /root/mpi-scripts/machinefile -n 3 ifconfig
+  171  cd ..
+  172  ls
+  173  mpiexec -f /root/mpi-scripts/machinefile -n 3 ifconfig
+  174  cd ~
+  175  mpiexec -f /root/mpi-scripts/machinefile -n 3 ifconfig
+  176  mpiexec -f /root/mpi-scripts/machinefile -n 3 tail -f /var/log/syslog
+  177  mpiexec -f /root/mpi-scripts/machinefile -n 3 ifconfig
+  178  mpiexec -f /root/mpi-scripts/machinefile -n 3 ifconfig
+  179  mpiexec -f /root/mpi-scripts/machinefile -n 3 tail -f /var/log/syslog
+  180  mpiexec -f /root/mpi-scripts/machinefile -n 3 ./a.out
+  181  mpiexec -f /root/mpi-scripts/machinefile -n 3 tail -f /var/log/syslog
+  182  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  183  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  184  history
+  185  mpiexec -f /root/mpi-scripts/machinefile -n 3 /home/mpich_build/examples/cpi
+  186  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  187  mpiexec -f /root/mpi-scripts/machinefile -n 4 poweroff
+  188  df -h
+  189  exit
+  190  exit
+  191  exit
+  192  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  193  history
+  194  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  195  mpiexec -f /root/mpi-scripts/machinefile -n 4 apt-get update
+  196  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  197  apt-get upgrade
+  198  mpiexec -f /root/mpi-scripts/machinefile -n 4 reboot
+  199  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  200  dig 3.debian.pool.ntp.org
+  201  dig 2.debian.pool.ntp.org
+  202  date
+  203  time
+  204  datetime
+  205  date
+  206  mpiexec -f /root/mpi-scripts/machinefile -n 4 date
+  207  tzconfig
+  208  d
+  209  apt-get upgrade
+  210  dpkg --configure -a
+  211  apt-get update
+  212  apt-get upgrade
+  213  apt-get update
+  214  apt-get upgrade
+  215  top
+  216  ssh kali2
+  217  ssh kali2
+  218  ssh kali3
+  219  apt-get update
+  220  apt-get upgrade
+  221  wpscan -h
+  222  wpscan -u www.nixle.com
+  223  wpscan -u nixle.com
+  224  wpscan -u www.everbridge.com
+  225  history
+  226  mpiexec -f /root/mpi-scripts/machinefile -n 4 tail -f /var/log/syslog
+  227  wget https://github.com/weaved/installer/raw/master/binaries/weaved-nixinstaller_1.2.13.bin
+  228  ls *.bin
+  229  ./weaved-nixinstaller_1.2.13.bin
+  230  chmod +x weaved-nixinstaller_1.2.13.bin
+  231  ./weaved-nixinstaller_1.2.13.bin
+  232  exit
+  233  ls
+  234  ls
+  235  exit
+  236  exit
+  237  ls -la
+  238  cd Videos/
+  239  ls
+  240  ls -la
+  241  cd ..
+  242  ls
+  243  ls -la
+  244  cd .ssh
+  245  ls
+  246  ls -la
+  247  ssh 10.0.2.2
+  248  pip install pubnub>=3.5.2
+  249  pip install python-nmap
+  250  python -V
+  251  apt-get update
+  252  apt-get upgrade
+  253  passwd
+  254  ssh 10.0.2.2
+  255  ssh 10.0.2.3
+  256  ssh 10.0.2.4
+  257  useradd rlai
+  258  passwd rlai
+  259  ssh -l rlai proxy14.yoics.net -p 30444
+  260  cd /var/log
+  261  cat syslog
+  262  cd /
+  263  ls
+  264  cd root
+  265  ls
+  266  mkdir python
+  267  cd python
+  268  ls
+  269  nano nmapScan.py
+  270  python nmapScan.py -H 10.0.2.2 -p 21
+  271  nano nmapScan.py
+  272  python nmapScan.py -H 10.0.2.2 -p 21
+  273  nano nmapScan.py
+  274  python nmapScan.py -H 10.0.2.2 -p 21
+  275  ls
+  276  cp nmapScan.py old.py
+  277  del nmapScan.py 
+  278  rm nmapScan.py 
+  279  ls
+  280  nano nmapScan.py
+  281  python nmapScan.py -H 10.0.2.2 -p 21
+  282  python nmapScan.py -t 10.0.2.2 -p 21
+  283  python nmapScan.py -t 10.0.2.2 -p 22
+  284  nano nmapScan.py
+  285  python nmapScan.py -t 10.0.2.2 -p 22
+  286  nano nmapScan.py
+  287  mv nmapScan.py portScan.py 
+  288  ls
+  289  nano nmapScan.py
+  290  python nmapScan.py -H 10.0.2.2 -p 22
+  291  nano nmapScan.py
+  292  python nmapScan.py -H 10.0.2.2 -p 22
+  293  nano nmapScan.py
+  294  python nmapScan.py -H 10.0.2.2 -p 22
+  295  mv nmapScan.py portScan 
+  296  nano nmapScan.py
+  297  python nmapScan.py -H 10.0.2.2 -p 22
+  298  python nmapScan.py -H 10.0.2.2 -p 53
+  299  nano nmapScan.py 
+  300  python nmapScan.py -H 10.0.2.2 -p 53
+  301  ssh 10.0.2.3
+  302  MyDusky@0@0
+  303  ssh 10.0.2.3
+  304  ls
+  305  atp-get update
+  306  apt-get update
+  307  apt-get upgrade
+  308  ssh 10.0.2.2
+  309  ssh 10.0.2.2
+  310  exit
+  311  nmap -p 443 --script ssl-enum-ciphers 66.77.69.151
+  312  exit
+  313  sslyze --regular www.everbridge.net
+  314  sslcaudit -l www.everbridge.net:443 -v 1
+  315  sslcaudit -l 66.77.73.2:443 -v 1
+  316  tlssled 66.77.73.2 443
+  317  tlssled manager.everbridge.net 443
+  318  tlssled api3.hipaachat.com 443
+  319  df -h
+  320  cat /var/log/syslog
+  321  apt-get update
+  322  apt-get upgrade
+  323  tlssled api3.hipaachat.com 443
+  324  history
+  325  tlssled 52.4.56.58 443
+  326  tlssled 52.88.11.127 443
+  327  tlssled 52.88.133.210 443
+  328  ls
+  329  nano report.py
+  330  python report.py 
+  331  python -V
+  332  apt-get update
+  333  apt-get upgrade
+  334  ls
+  335  ifconfig
+  336  lsusb
+  337  nano /etc/hostapd/hostapd.conf 
+  338  iw list
+  339  nano /etc/network/interfaces 
+  340  reboot
+  341  ifconfig
+  342  ls
+  343  cd /var/log
+  344  cat syslog
+  345  cat syslog
+  346  cd /
+  347  cd ~
+  348  python
+  349  pwd
+  350  ls -la
+  351  /Users/Robert python report.py
+  352  ls
+  353  python report.py 
+  354  nano report.py
+  355  python report.py 
+  356  nano report.py
+  357  python report.py 
+  358  nano report.py
+  359  python report.py 
+  360  nano report.py
+  361  pip install tabulate
+  362  pip install tabulate
+  363  nano report.py
+  364  python report.py 
+  365  nano report.py
+  366  python report.py 
+  367  nano report.py
+  368  python report.py 
+  369  nano report.py
+  370  python report.py 
+  371  nano report.py
+  372  python report.py 
+  373  nano report.py
+  374  python report.py 
+  375  nano report.py
+  376  python report.py 
+  377  nano report.py
+  378  python report.py 
+  379  git clone https://github.com/snosrap/wemo.git
+  380  cd wemo
+  381  ls
+  382  ls -la
+  383  python miranda.py
+  384  apt-get update
+  385  apt-get update
+  386  apt-get upgrade
+  387  ls -la
+  388  cd ..
+  389  ls
+  390  pwd
+  391  lsusb
+  392  ifconfig
+  393  nano report.py
+  394  python report.py
+  395  python
+  396  ls
+  397  nano report.py 
+  398  python report.py
+  399  history
+  400  pip install ouimeaux
+  401  wemo list
+  402  wemo status
+  403  wemo list
+  404  wemo server &
+  405  curl http://localhost:5000/api/environment
+  406  curl http://localhost:5000/api/environment
+  407  apt-get update
+  408  apt-get upgrade
+  409  apt-get dist-upgrade
+  410  history
+  411  locate miranda
+  412  miranda
+  413  history
+  414  locate tls
+  415  history | grep tls
+  416  tlssled manager.everbridge.net 443
+  417  arp -a
+  418  wemo
+  419  wemo list
+  420  miranda
+  421  npm install xbee-api
+  422  apt-get install npm
+  423  apt-get update
+  424  apt-get upgrade
+  425  node -version
+  426  curl -sL https://deb.nodesource.com/setup | bash -
+  427  apt-get install nodejs
+  428  apt-get install npm
+  429  curl -sL https://deb.nodesource.com/setup_0.12 | bash -
+  430  curl --silent --location https://deb.nodesource.com/setup_0.12 | bash -
+  431  wget http://node-arm.herokuapp.com/node_latest_armhf.deb 
+  432  dpkg -i node_latest_armhf.deb
+  433  npm -v
+  434  npm install socket.io
+  435  pip install pyserial
+  436  pip install simplejson
+  437  npm install xbee-api
+  438  npm install serialport
+  439  apt-get install python-serial
+  440  exit
+  441  reboot
+  442  apt-get update
+  443  apt-get upgrade
+  444  startx
+  445  reboot
+  446  startx
+  447  reboot
+  448  top
+  449  startx
+  450  lsusb
+  451  nano /etc/hostapd/hostapd.conf 
+  452  /etc/init.d/hostapd status
+  453  /etc/init.d/hostapd start
+  454  iwconfig
+  455  reboot
+  456  exit
+  457  iwconfig
+  458  iwconfig
+  459  reboot
+  460  exit
+  461  lwconfig
+  462  iwconfig
+  463  lsusb
+  464  nano /etc/network/interfaces
+  465  ifconfig
+  466  lsmod
+  467  nano /etc/hostapd/hostapd.conf 
+  468  /etc/init.d/hostapd start
+  469  iwconfig
+  470  iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+  471  iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+  472  iptables -A FORWARD -i wlan2 -o eth0 -j ACCEPT
+  473  iptables -A FORWARD -i eth1 -o wlan2 -m state --state RELATED,ESTABLISHED -j ACCEPT
+  474  iptables -A FORWARD -i wlan2 -o eth1 -j ACCEPT
+  475  iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+  476  iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+  477  sh -c "iptables-save > /etc/iptables.ipv4.nat"
+  478  service dnsmasq restart
+  479  iwconfig
+  480  iwconfig
+  481  cd /var/log
+  482  ls
+  483  ls -la
+  484  cat messages
+  485  ls -la
+  486  apt-get update
+  487  apt-get upgrade
+  488  reboot && exit
+  489  cd /var/log
+  490  ls
+  491  cat messages
+  492  iwconfig
+  493  ifconfig
+  494  nano /etc/hostapd/hostapd.conf 
+  495  /etc/init.d/hostapd status
+  496  /etc/init.d/hostapd stop
+  497  /etc/init.d/hostapd start
+  498  reboot && exit
+  499  locate dhcp
+  500  locate dhcpd.conf
+  501  locate wpa
+  502  locate wpa_supplicant
+  503  locate dhcpd.conf
+  504  iw list
+  505  nano /etc/hostapd/hostapd.conf 
+  506  wget http://www.adafruit.com/downloads/adafruit_hostapd.zip 
+  507  unzip adafruit_hostapd.zip 
+  508  locate hostapd
+  509  ls
+  510  history
+

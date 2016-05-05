@@ -1,0 +1,17 @@
+python notes
+
+https://github.com/jehiah/json2csv
+
+
+
+# read files in the directory
+
+import os, glob
+
+path = './'
+
+for infile in glob.glob( os.path.join(path, '*.*') ):
+    print("current file is: " + infile)
+    
+for infile in glob.glob( os.path.join(path, '*.json') ):
+    print("current file is: " + infile)
