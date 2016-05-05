@@ -1,0 +1,2 @@
+#install WordPress Security Scanner 
+apt-get install wpscan
